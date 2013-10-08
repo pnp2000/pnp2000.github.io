@@ -1,0 +1,219 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Keil MDK编译器警告和错误详解 | NG's Blog</title>
+  <meta name="author" content="NG">
+  
+  <meta name="description" content="1.warning: #550-D: variable “d” was set but never used
+描述:变量‘d’定义但从未使用,或者是,虽然这个变量你使用了,但编译器认为变量d所在的语句没有意义,编译器把它优化了.
+解决:仔细衡量所定义的变量d是否有用,若是认定变量d所在语句有意义,那">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="Keil MDK编译器警告和错误详解"/>
+  <meta property="og:site_name" content="NG's Blog"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="NG's Blog" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">NG's Blog</a></h1>
+  <h2><a href="/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div></header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2013-10-08T02:02:18.000Z"><a href="/2013/10/08/2013-04-17-b808af17/">10月 8 2013</a></time>
+      
+      
+  
+    <h1 class="title">Keil MDK编译器警告和错误详解</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>1.warning: #550-D: variable “d” was set but never used</p>
+<p>描述:变量‘d’定义但从未使用,或者是,虽然这个变量你使用了,但编译器认为变量d所在的语句没有意义,编译器把它优化了.</p>
+<p>解决:仔细衡量所定义的变量d是否有用,若是认定变量d所在语句有意义,那么尝试用volatile关键字修饰变量d,若是真的没有用,那么删除掉以释放可能的内存.</p>
+<p>2.warning: #1-D: last line of file ends without a newline</p>
+<p>描述:文件最后一行不是新的一行.编译器要求程序文件的最后一行必须是空行,想了半天没想通为什么要这样.</p>
+<p>解决:可以不理会.若是觉得出现警告不爽,那么在出现警告的文件的最后一行敲个回车,空出一行.</p>
+<p>​3. warning: #111-D: statement is unreachable</p>
+<p>描述:声明不可能到达.多出现在这种场合:</p>
+<p>int main(void)</p>
+<p>{</p>
+<p>…</p>
+<p>while(1) //无限循环,这在不使用操作系统的程序中最常见</p>
+<p>{</p>
+<p>…</p>
+<p>}</p>
+<p>return 0; //这句声明在正常情况下不可能执行到,编译器发出警告</p>
+<p>}</p>
+<p>解决:不理会.</p>
+<p>​4. warning: C3017W: data may be used before being set</p>
+<p>描述:变量‘data’在使用前没有明确的赋值.如:</p>
+<p>uint8 i,data; //定义变量i和data,二者都没有明确赋值</p>
+<p>for ( i = 0; i \&lt; 8; i++) //变量‘i’在语句中被赋值0</p>
+<p>{</p>
+<p>if ( IO1PIN &amp; SO_CC2420 )</p>
+<p>data |= 0x01; //变量‘data’在使用前没有明确赋值,编译器发出警告</p>
+<p>else</p>
+<p>data &amp;= ~0x01;</p>
+<p>}</p>
+<p>解决:应仔细衡量该变量的初始值是否为0，若是,可以不理会这个警告,因为MDK编译器在程序执行前,会将使用到的数据区初始化为0,但若是该变量的初始值不应该是0，忽略这个警告可能会引起致命错误.这个警告应引起足够重视.应养成变量赋初值的习惯,好在有编译器给把关.</p>
+<p>​5. warning: #177-D: variable “temp” was declared but never referenced</p>
+<p>描述:变量‘temp’进行了声明但没有引用.多出现在声明了一个变量,但却没有使用它,它和warning: #550-D: variable “temp” was set but never used不同之处在于temp从没有使用过.</p>
+<p>解决:若是定义的变量确实没有用,删除掉;若是有用,则在程序中使用.</p>
+<p>与该警告类似的还有 warning: #177-D: function “MACProcessBeacon” was declared but never referenced</p>
+<p>​6. warning: #940-D: missing return statement at end of non-void function “DealwithInspect2”</p>
+<p>描述:返回非空的函数“DealwithInspect2”的最后缺少返回值声明.如:</p>
+<p>int DealwithInspect2(uint32 test)</p>
+<p>{</p>
+<p>…</p>
+<p>…</p>
+<p>…</p>
+<p>//此处应该是return x;返回一个int型数据,若是没有返回值,编译器产生警告</p>
+<p>}</p>
+<p>7..warning: #1295-D: Deprecated declaration lcd_init - give arg types</p>
+<p>描述:在定义函数的时候,如果你写上函数参数,就会有这个警告,比如void timer_init(); 这里就没有形参,如果这样的话,编译器会给出警告.</p>
+<p>​1. error: #65: expected a “;”</p>
+<p>描述:缺少分号.大多是漏忘‘;’.</p>
+<p>解决:双击错误行,在定位到错误点的附近找到没加‘;’号的语句,加上分号.并不一定在定位到的错误行才却分号,可能是这行的上一行,也可能是下一行.</p>
+<p>​2. error: #65: expected a “;”和 error: #20: identifier “xxxx” is undefined一块出现,而且后面的error: #20错误可能一大堆</p>
+<p>描述:这个错误对于第一次遇上的人来说绝对是个噩梦,当错误出现,满怀希望的双击错误提示,来到错误行时却愕然发现,错误行绝对没有错,于是找找错误行的上一行,下一行,没有错误,再找上上行,下下行…让人无比郁闷的事情出现了:编译提示的所有错误行都不可能有错误出现.其实这最可能是你在.h文件声明外部变量或者函数时,没有在声明语句的最后加分号!如果你有很多模块,如main.c,lcd.c,key.c…有很多头文件,如lcd.h,key.h,若是在lcd.h文件声明函数时没有加分号,那么这种错误可能定为到main.c中,所以要检查所有头文件.</p>
+<p>解决:仔细检查.h文件,将分号补上.</p>
+<p>​3. Error: L6200E: Symbol flagu multiply defined (by uart0.o and main.o).</p>
+<p>描述:变量(也是一种符号)flagu多处定义(在uart0.c中和main.c都定义了).通常错在全局变量定义重复.比如:在main.c中定义全局变量flagu:</p>
+<p>uint8 flagu=0;</p>
+<p>在uart0.c中也用到该变量,于是声明此变量,我通常都是先复制定义的变量再在变量前面加关键字extern修饰:</p>
+<p>extern uint8 flagu=0;</p>
+<p>然后编译,就会出现上面的连接错误,原因在于,我在uart0.c中是又定义了一个变量,而不是声明变量,因为我给变量赋了初值“flagu=0”,这样就重复定义了变量flag.正确的声明方法是去掉赋值部分:</p>
+<p>extern uint8 flagu;</p>
+<p>解决办法:找到重复定义的变量,看情况修改一处.</p>
+<p>4.error: #159: declaration is incompatible with previous &quot;wr_lcd&quot; (declared at line 40)</p>
+<p>描述:在wr_lcd函数还没有声明之前就已经使用了.多出现在两种情况:第一种,wr_lcd函数体还没有写,就已经用到了它,这种情况多出现在写一个程序的大体结构中,只是简单写一下框架.第二种情况比较常见,函数a调用函数b,但函数b的函数体在函数a的下面:</p>
+<p>void a(void) //函数a的实体</p>
+<p>{</p>
+<p>b(); //调用函数b</p>
+<p>}</p>
+<p>void b(void) //函数b的实体</p>
+<p>{</p>
+<p>…</p>
+<p>}</p>
+<p>这样如果点编译,就会产生error: #159的错误,因为当函数a调用函数b时,发现在这之前都没有函数b的任何声明.</p>
+<p>解决方法:在函数a调用函数b之前,对函数b进行声明,如:</p>
+<p>void b(void); //对函数b进行声明</p>
+<p>void a(void) //函数a的实体</p>
+<p>{</p>
+<p>b(); //调用函数b</p>
+<p>}</p>
+<p>void b(void) //函数b的实体</p>
+<p>{</p>
+<p>…</p>
+<p>}</p>
+<p>​5. error: #137: expression must be a modifiable lvalue</p>
+<p>描述:表达式必须是一个可以修改的左值.主要出现在这种现象:</p>
+<p>a=NUM;</p>
+<p>NUM是一个数值或表达式,a为一个变量,但a被定义为像const这种不可更改的类型,导致NUM不能赋值给变量a.</p>
+<p>解决方法:要么放弃赋值,要么修改变量属性.</p>
+<p>6.error: #18: expected a “)”</p>
+<p>如果是出现在c文件中, 多半是因为少了一个“)”,或者错误行有编译器不识别的字符</p>
+<p>如果出现在头文件中,错误行又是一个函数声明,多半是因为在函数声明中有编译器不认识的字符</p>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+        
+  <div class="addthis addthis_toolbox addthis_default_style">
+    
+      <a class="addthis_button_facebook_like" fb:like:layout="button_count"></a>
+    
+    
+      <a class="addthis_button_tweet"></a>
+    
+    
+      <a class="addthis_button_google_plusone" g:plusone:size="medium"></a>
+    
+    
+      <a class="addthis_button_pinterest_pinit" pi:pinit:layout="horizontal"></a>
+    
+    <a class="addthis_counter addthis_pill_style"></a>
+  </div>
+  <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js"></script>
+
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:yoursite.com">
+  </form>
+</div>
+
+  
+
+  
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2013 NG
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+</body>
+</html>

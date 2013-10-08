@@ -1,0 +1,402 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>VC中PCSC操作读卡器 | NG's Blog</title>
+  <meta name="author" content="NG">
+  
+  <meta name="description" content="1 引言
+完整的智能卡应用系统由后台服务程序、主机或终端应用程序和智能卡等组成，如图1所示。其中，后台服务程序提供了支持智能卡的服务。例如，在一个电子付款系统中，后台服务程序可以提供到信用卡和帐户信息的访问；主机或终端应用程序一般存在于台式机或者终端、电子付款终端、手机或者一个安全子系统中，终端应用">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="VC中PCSC操作读卡器"/>
+  <meta property="og:site_name" content="NG's Blog"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="NG's Blog" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">NG's Blog</a></h1>
+  <h2><a href="/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div></header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2013-10-08T02:02:18.000Z"><a href="/2013/10/08/2013-04-22-f9ba07a0/">10月 8 2013</a></time>
+      
+      
+  
+    <h1 class="title">VC中PCSC操作读卡器</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>1 引言</p>
+<pre><code>完整的智能卡应用系统由后台服务程序、主机或终端应用程序和智能卡等组成，如图<span class="number">1</span>所示。其中，后台服务程序提供了支持智能卡的服务。例如，在一个电子付款系统中，后台服务程序可以提供到信用卡和帐户信息的访问；主机或终端应用程序一般存在于台式机或者终端、电子付款终端、手机或者一个安全子系统中，终端应用程序要处理用户、智能卡和后台服务程序之间的通讯；智能卡则存储用户的一些信息。
+
+终端应用程序需要通过读卡器来访问智能卡，在一个系统中，通常存在多家厂商提供的读卡器，因此需要一个统一的读卡器设备驱动接口。
+
+随着智能卡的广泛应用，为解决计算机与各种读卡器之间的互操作性问题，人们提出了PC<span class="regexp">/SC（Personal Computer/Smart Card）规范，PC/</span>SC规范作为读卡器和卡与计算机之间有一个标准接口，实现不同生产商的卡和读卡器之间的互操作性，其独立于设备的 API使得应用程序开发人员不必考虑当前实现形式和将来实现形式之间的差异，并避免了由于基本硬件改变而引起的应用程序变更，从而降低了软件开发成本。
+
+Microsoft在其Platform SDK中实现了PC<span class="regexp">/SC，作为连接智能卡读卡器与计算机的一个标准模型，提供了独立于设备的 API，并与Windows平台集成。因此，我们可以用PC/</span>SC接口来访问智能卡。</code></pre>
+<p>2 PC/SC概述</p>
+<pre><code>PC/SC接口包含30多个以Scard为前缀的函数，所有函数的原型都在winscard.h中声明，应用程序需要包含winscard.lib，所有函数的正常返回值都是SCARD<span class="command">\_</span>S<span class="command">\_</span>SUCCESS。在这30多个函数中，常用的函数只有几个，与智能卡的访问流程（图2）对应，下面将详细介绍这些常用函数。</code></pre>
+<p>3 PC/SC的使用</p>
+<p>3.1建立资源管理器的上下文</p>
+<pre><code>函数ScardEstablishContext()用于建立将在其中进行设备数据库操作的资源管理器上下文（范围）。
+
+函数原型：LONG SCardEstablishContext(DWORD dwScope, LPCVOID pvReserved1, LPCVOID pvReserved2, LPSCARDCONTEXT phContext)<span class="comment">;</span>
+
+各个参数的含义：</code></pre>
+<p>（1）dwScope：输入类型；表示资源管理器上下文范围，取值为：SCARD_SCOPE_USER（在用户域中完成设备数据库操作）、SCARD_SCOPE_SYSTEM（在系统域中完成设备数据库操作）。要求应用程序具有相应的操作权限。</p>
+<p>（2）pvReserved1：输入类型；保留，必须为NULL。</p>
+<p>（3）pvReserved2：输入类型；保留，必须为NULL。</p>
+<p>（4）phContext：输出类型；建立的资源管理器上下文的句柄。</p>
+<p>下面是建立资源管理器上下文的代码：</p>
+<pre><code><span class="title">SCARDCONTEXT</span>        hSC;
+
+<span class="title">LONG</span>                          lReturn;
+
+<span class="title">lReturn</span> = SCardEstablishContext(SCARD\_SCOPE\_USER, NULL, NULL, &amp;hSC);
+
+<span class="title">if</span> ( lReturn!=SCARD\_S\_SUCCESS )
+
+    printf(<span class="string">"Failed SCardEstablishContext\\n"</span>);</code></pre>
+<p>3.2 获得系统中安装的读卡器列表</p>
+<pre><code>函数ScardListReaders()可以列出系统中安装的读卡器的名字。
+
+函数原型：LONG SCardListReaders(SCARDCONTEXT hContext, LPCTSTR mszGroups, LPTSTR mszReaders, LPDWORD pcchReaders)<span class="comment">;</span>
+
+各个参数的含义：</code></pre>
+<p>（1）hContext：输入类型；ScardEstablishContext()建立的资源管理器上下文的句柄，不能为NULL。</p>
+<p>（2）mszGroups：输入类型；读卡器组名，为NULL时，表示列出所有读卡器。</p>
+<p>（3）mszReaders：输出类型；系统中安装的读卡器的名字，各个名字之间用’\0’分隔，最后一个名字后面为两个连续的’\0’。</p>
+<p>（4）pcchReaders：输入输出类型；mszReaders的长度。</p>
+<pre><code>系统中可能安装多个读卡器，因此，需要保存各个读卡器的名字，以便以后与需要的读卡器建立连接。
+
+下面是获得系统中安装的读卡器列表的代码：
+
+<span class="keyword">char</span>               mszReaders[<span class="number">1024</span>];
+
+LPTSTR               pReader, pReaderName[<span class="number">2</span>];
+
+DWORD               dwLen=<span class="keyword">sizeof</span>(mzsReaders);
+
+<span class="keyword">int</span>                         nReaders=<span class="number">0</span>;
+
+lReturn = SCardListReaders(hSC, <span class="literal">NULL</span>, (LPTSTR)mszReaders, &amp;dwLen);
+
+<span class="keyword">if</span> ( lReturn==SCARD\_S\_SUCCESS )
+
+{
+
+    pReader = (LPTSTR)pmszReaders;
+
+    <span class="keyword">while</span> (\*pReader !=<span class="string">'\\0'</span> )
+
+    {
+
+        <span class="keyword">if</span> ( nReaders\&lt;<span class="number">2</span> ) <span class="comment">//使用系统中前2个读卡器</span>
+
+            pReaderName[nReaders++]=pReader;
+
+        printf(<span class="string">"Reader: %S\\n"</span>, pReader );
+
+        <span class="comment">//下一个读卡器名</span>
+
+        pReader = pReader + strlen(pReader) + <span class="number">1</span>;
+
+    }
+
+}</code></pre>
+<p>3.3 与读卡器（智能卡）连接</p>
+<pre><code>函数ScardConnect()在应用程序与读卡器上的智能卡之间建立一个连接。
+
+函数原型：LONG SCardConnect(SCARDCONTEXT hContext, LPCTSTR szReader, DWORD dwShareMode, DWORD dwPreferredProtocols, LPSCARDHANDLE phCard, LPDWORD pdwActiveProtocol)<span class="comment">;</span>
+
+各个参数的含义：</code></pre>
+<p>（1）hContext：输入类型；ScardEstablishContext()建立的资源管理器上下文的句柄。</p>
+<p>（2）szReader：输入类型；包含智能卡的读卡器名称（读卡器名称由ScardListReaders()给出）。</p>
+<p>（3）dwShareMode：输入类型；应用程序对智能卡的操作方式，SCARD_SHARE_SHARED（多个应用共享同一个智能卡）、SCARD_SHARE_EXCLUSIVE（应用独占智能卡）、SCARD_SHARE_DIRECT（应用将智能卡作为私有用途，直接操纵智能卡，不允许其它应用访问智能卡）。</p>
+<p>（4）dwPreferredProtocols：输入类型；连接使用的协议，SCARD_PROTOCOL_T0（使用T=0协议）、SCARD_PROTOCOL_T1（使用T=1协议）。</p>
+<p>（5）phCard：输出类型；与智能卡连接的句柄。</p>
+<p>（6）PdwActiveProtocol：输出类型；实际使用的协议。</p>
+<pre><code>下面是与智能卡建立连接的代码：</code></pre>
+<p>SCARDHANDLE          hCardHandle[2];</p>
+<p>DWORD               dwAP;</p>
+<p>lReturn = SCardConnect( hContext, pReaderName[0],    SCARD_SHARE_SHARED,</p>
+<p>SCARD_PROTOCOL_T0 | SCARD_PROTOCOL_T1, &amp;hCardHandle[0], &amp;dwAP );</p>
+<p>if ( lReturn!=SCARD_S_SUCCESS )</p>
+<p>{</p>
+<pre><code><span class="function"><span class="title">printf</span><span class="params">(<span class="string">"Failed SCardConnect\\n"</span>)</span>;
+
+<span class="title">exit</span><span class="params">(<span class="number">1</span>)</span>;</code></pre>
+<p>}</p>
+<p>与智能卡建立连接后，就可以向智能卡发送指令，与其交换数据了。</p>
+<p>3.4 向智能卡发送指令</p>
+<pre><code>函数ScardTransmit()向智能卡发送指令，并接受返回的数据。
+
+函数原型：LONG SCardTransmit(SCARDHANDLE hCard, LPCSCARD<span class="command">\_</span>I0<span class="command">\_</span>REQUEST pioSendPci, LPCBYTE pbSendBuffer, DWORD cbSendLength, LPSCARD<span class="command">\_</span>IO<span class="command">\_</span>REQUEST pioRecvPci, LPBYTE pbRecvBuffer, LPDWORD pcbRecvLength);
+
+各个参数的含义：</code></pre>
+<p>（1）hCard：输入类型；与智能卡连接的句柄。</p>
+<p>（2）pioSendPci：输入类型；指令的协议头结构的指针，由SCARD_IO_REQUEST结构定义。后面是使用的协议的协议控制信息。一般使用系统定义的结构，SCARD_PCI_T0（T=0协议）、SCARD_PCI_T1（T=1协议）、SCARD_PCI_RAW（原始协议）。</p>
+<p>（3）pbSendBuffer：输入类型；要发送到智能卡的数据的指针。</p>
+<p>（4）cbSendLength：输入类型；pbSendBuffer的字节数目。</p>
+<p>（5）pioRecvPci：输入输出类型；指令协议头结构的指针，后面是使用的协议的协议控制信息，如果不返回协议控制信息，可以为NULL。</p>
+<p>（6）pbRecvBuffer：输入输出类型；从智能卡返回的数据的指针。</p>
+<p>（7）pcbRecvLength：输入输出类型；pbRecvBuffer的大小和实际大小。</p>
+<pre><code>对于<span class="literal">T</span>=<span class="number">0</span>协议，收发缓冲的用法如下：</code></pre>
+<p>（a）向智能卡发送数据：</p>
+<pre><code>要向智能卡发送n<span class="command">\&gt;</span>0字节数据时，pbSendBuffer前4字节分别为T=0的CLA、INS、P1、P2，第5字节是n，随后是n字节的数据；cbSendLength值为n+5（4字节头+1字节Lc+n字节数据）。PbRecvBuffer将接收SW1、SW2状态码；pcbRecvLength值在调用时至少为2，返回后为2。</code></pre>
+<p>BYTE             recvBuffer[260];</p>
+<p>int                  sendSize, recvSize;</p>
+<p>BTYE             sw1, sw2;</p>
+<p>BYTE    select_mf[]={0xC0, 0xA4, 0x00, 0x00, 0x02, 0x3F, 0x00};</p>
+<p>sendSize=7;</p>
+<p>recvSize=sizeof(recvBuffer);</p>
+<p>lReturn = SCardTransmit(hCardHandle[0], SCARD_PCI_T0, select_mf, sendSize,</p>
+<p>NULL, recvBuffer, &amp;recvSize);</p>
+<p>if ( lReturn != SCARD_S_SUCCESS )</p>
+<p>{</p>
+<pre><code><span class="function"><span class="title">printf</span><span class="params">(<span class="string">"Failed SCardTransmit\\n"</span>)</span>;
+
+<span class="title">exit</span><span class="params">(<span class="number">1</span>)</span>;</code></pre>
+<p>}</p>
+<p>//返回的数据，recvSize=2</p>
+<p>sw1=recvBuffer[recvSize-2];</p>
+<p>sw2=recvBuffer[recvSize-1];</p>
+<p>（b）从智能卡接收数据：</p>
+<pre><code>为从智能卡接收n<span class="command">\&gt;</span>0字节数据，pbSendBuffer前4字节分别为T=0的CLA、INS、P1、P2，第5字节是n（即Le），如果从智能卡接收256字节，则第5字节为0；cbSendLength值为5（4字节头+1字节Le）。PbRecvBuffer将接收智能卡返回的n字节，随后是SW1、SW2状态码；pcbRecvLength的值在调用时至少为 n+2，返回后为n+2。</code></pre>
+<p>BYTE          get_challenge[]={0x00, 0x84, 0x00, 0x00, 0x08};</p>
+<p>sendSize=5;</p>
+<p>recvSize=sizeof(recvBuffer);</p>
+<p>lReturn = SCardTransmit(hCardHandle[0], SCARD_PCI_T0, get_challenge,</p>
+<p>sendSize, NULL, recvBuffer, &amp;recvSize);</p>
+<p>if ( lReturn != SCARD_S_SUCCESS )</p>
+<p>{</p>
+<pre><code><span class="function"><span class="title">printf</span><span class="params">(<span class="string">"Failed SCardTransmit\\n"</span>)</span>;
+
+<span class="title">exit</span><span class="params">(<span class="number">1</span>)</span>;</code></pre>
+<p>}</p>
+<p>//返回的数据, recvSize=10</p>
+<p>sw1=recvBuffer[recvSize-2];</p>
+<p>sw2=recvBuffer[recvSize-1];</p>
+<p>//data=recvBuffer[0]——recvBuffer[7]</p>
+<p>（c）向智能卡发送没有数据交换的命令：</p>
+<pre><code>应用程序既不向智能卡发送数据，也不从智能卡接收数据，pbSendBuffer前<span class="number">4</span>字节分别为<span class="literal">T</span>=<span class="number">0</span>的CLA、INS、P1、P2，不发送P3；cbSendLength值必须为<span class="number">4</span>。PbRecvBuffer从智能卡接收SW1、SW2状态码；pcbRecvLength值在调用时至少为<span class="number">2</span>，返回后为<span class="number">2</span>。</code></pre>
+<p>BYTE    set_flag[]={0x80, 0xFE, 0x00, 0x00};</p>
+<p>sendSize=4;</p>
+<p>recvSize=sizeof(recvBuffer);</p>
+<p>lReturn = SCardTransmit(hCardHandle[0], SCARD_PCI_T0, set_flag, sendSize,</p>
+<p>NULL, recvBuffer, &amp;recvSize);</p>
+<p>if ( lReturn != SCARD_S_SUCCESS )</p>
+<p>{</p>
+<pre><code><span class="function"><span class="title">printf</span><span class="params">(<span class="string">"Failed SCardTransmit\\n"</span>)</span>;
+
+<span class="title">exit</span><span class="params">(<span class="number">1</span>)</span>;</code></pre>
+<p>}</p>
+<p>//返回的数据，recvSize=2</p>
+<p>sw1=recvBuffer[recvSize-2];</p>
+<p>sw2=recvBuffer[recvSize-1];</p>
+<p>（d）向智能卡发送具有双向数据交换的命令：</p>
+<pre><code><span class="literal">T</span>=<span class="number">0</span>协议中，应用程序不能同时向智能卡发送数据，并从智能卡接收数据，即发送到智能卡的指令中，不能同时有Lc和Le。
+
+这只能分两步实现：向智能卡发送数据，接收智能卡返回的状态码，其中，SW2是智能卡将要返回的数据字节数目；从智能卡接收数据（指令为<span class="number">0x00</span>、<span class="number">0xC0</span>、<span class="number">0x00</span>、<span class="number">0x00</span>、Le）。</code></pre>
+<p>BYTE      get_response={0x00, 0xc0, 0x00, 0x00, 0x00};</p>
+<p>BYTE    internal_auth[]={0x00, 0x88, 0x00, 0x00, 0x08, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08};</p>
+<p>sendSize=13;</p>
+<p>recvSize=sizeof(recvBuffer);</p>
+<p>lReturn = SCardTransmit(hCardHandle[0], SCARD_PCI_T0, internal_auth,</p>
+<p>sendSize, NULL, recvBuffer, &amp;recvSize);</p>
+<p>if ( lReturn != SCARD_S_SUCCESS )</p>
+<p>{</p>
+<pre><code><span class="function"><span class="title">printf</span><span class="params">(<span class="string">"Failed SCardTransmit\\n"</span>)</span>;
+
+<span class="title">exit</span><span class="params">(<span class="number">1</span>)</span>;</code></pre>
+<p>}</p>
+<p>//返回的数据，recvSize=2</p>
+<p>sw1=recvBuffer[recvSize-2];</p>
+<p>sw2=recvBuffer[recvSize-1];</p>
+<pre><code>   <span class="title">if</span> ( sw1!=0x61 )</code></pre>
+<p>{</p>
+<pre><code><span class="function"><span class="title">printf</span><span class="params">(<span class="string">"Failed Command\\n"</span>)</span>;
+
+<span class="title">exit</span><span class="params">(<span class="number">1</span>)</span>;</code></pre>
+<p>}</p>
+<p>get_response[4]=sw2;</p>
+<p>sendSize=5;</p>
+<p>recvSize=sizeof(recvBuffer);</p>
+<p>lReturn = SCardTransmit(hCardHandle[0], SCARD_PCI_T0, get_response,</p>
+<p>sendSize, NULL, recvBuffer, &amp;recvSize);</p>
+<p>if ( lReturn != SCARD_S_SUCCESS )</p>
+<p>{</p>
+<pre><code><span class="function"><span class="title">printf</span><span class="params">(<span class="string">"Failed SCardTransmit\\n"</span>)</span>;
+
+<span class="title">exit</span><span class="params">(<span class="number">1</span>)</span>;</code></pre>
+<p>}</p>
+<p>//返回的数据，recvSize=10</p>
+<p>sw1=recvBuffer[recvSize-2];</p>
+<p>sw2=recvBuffer[recvSize-1];</p>
+<p>//data=recvBuffer[0]——recvBuffer[7]</p>
+<p>3.5 断开与读卡器（智能卡）的连接</p>
+<pre><code>在与智能卡的数据交换完成后，可以使用函数ScardDisconnect()终止应用与智能卡之间的连接。
+
+函数原型：LONG SCardDisconnect(SCARDHANDLE hCard, DWORD dwDisposition)<span class="comment">;</span>
+
+各个参数的含义：</code></pre>
+<p>（1）hCard：输入类型；与智能卡连接的句柄。</p>
+<p>（2）dwDisposition：输入类型；断开连接时，对智能卡的操作，SCARD_LEAVE_CARD（不做任何操作）、SCARD_RESET_CARD（复位智能卡）、SCARD_UNPOWER_CARD（给智能卡掉电）、SCARD_EJECT_CARD（弹出智能卡）。</p>
+<pre><code>下面是断开与智能卡连接的代码：</code></pre>
+<p>lReturn = SCardDisconnect(hCardHandle[0], SCARD_LEAVE_CARD);</p>
+<p>if ( lReturn != SCARD_S_SUCCESS )</p>
+<p>{</p>
+<pre><code><span class="function"><span class="title">printf</span><span class="params">(<span class="string">"Failed SCardDisconnect\\n"</span>)</span>;
+
+<span class="title">exit</span><span class="params">(<span class="number">1</span>)</span>;</code></pre>
+<p>}</p>
+<p>3.6 释放资源管理上下文</p>
+<pre><code>   在应用程序终止前时，应该调用函数ScardReleaseContext()释放资源管理器的上下文。
+
+函数原型：LONG SCardReleaseContext(SCARDCONTEXT hContext)<span class="comment">;</span>
+
+各个参数含义：</code></pre>
+<p>（1）hContext：输入类型；ScardEstablishContext()建立的资源管理器上下文的句柄，不能为NULL。</p>
+<p>下面是释放资源管理上下文的代码：</p>
+<p>lReturn = SCardReleaseContext(hSC);</p>
+<p>if ( lReturn!=SCARD_S_SUCCESS )</p>
+<p>printf(&quot;Failed SCardReleaseContext\n&quot;);</p>
+<p>4 小结</p>
+<pre><code>以上介绍的通过PC/SC来操作智能卡的流程，可以封装在一个类中。例如，我们可以设计一个类:</code></pre>
+<p>class CSmartReader</p>
+<p>{</p>
+<p>private:</p>
+<pre><code><span class="title">SCARDCONTEXT</span> hSC;
+
+<span class="title">LONG</span>                   lReturn;
+
+<span class="title">char</span>               mszReaders[<span class="number">1024</span>];
+
+<span class="title">LPTSTR</span>               pReader, pReaderName[<span class="number">2</span>];
+
+<span class="title">DWORD</span>               dwLen;
+
+<span class="title">int</span>                         nReaders, nCurrentReader;
+
+<span class="title">SCARDHANDLE</span>          hCardHandle[<span class="number">2</span>];
+
+<span class="title">DWORD</span>               dwAP;</code></pre>
+<p>public:</p>
+<pre><code>   CSmartReader(); <span class="comment">//建立上下文、取读卡器列表</span>
+
+   \~CSmartReader(); <span class="comment">//释放上下文</span>
+
+   <span class="keyword">void</span> SetCurrentReader(<span class="keyword">int</span> currentReader);
+
+   <span class="keyword">int</span> GetReaders(); <span class="comment">//获得读卡器数目</span>
+
+   <span class="keyword">int</span> ConnectReader(); <span class="comment">//与当前读卡器建立连接</span>
+
+   <span class="keyword">int</span> DisConnectReader(); <span class="comment">//与当前读卡器断开连接</span>
+
+   <span class="keyword">int</span> SendCommand(BYTE command[], <span class="keyword">int</span> commandLength, BYTE result[], <span class="keyword">int</span> \*resultLength); <span class="comment">//向读卡器发送命令，并接收返回的数据。返回值为sw</span></code></pre>
+<p>};</p>
+<pre><code>   这样，我们就可以方便地使用PC/SC接口了。</code></pre>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+        
+  <div class="addthis addthis_toolbox addthis_default_style">
+    
+      <a class="addthis_button_facebook_like" fb:like:layout="button_count"></a>
+    
+    
+      <a class="addthis_button_tweet"></a>
+    
+    
+      <a class="addthis_button_google_plusone" g:plusone:size="medium"></a>
+    
+    
+      <a class="addthis_button_pinterest_pinit" pi:pinit:layout="horizontal"></a>
+    
+    <a class="addthis_counter addthis_pill_style"></a>
+  </div>
+  <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js"></script>
+
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:yoursite.com">
+  </form>
+</div>
+
+  
+
+  
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2013 NG
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+</body>
+</html>

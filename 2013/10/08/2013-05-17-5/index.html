@@ -1,0 +1,312 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>MFD40 DATA LOG | NG's Blog</title>
+  <meta name="author" content="NG">
+  
+  <meta name="description" content="commandSELECT_PICC ———————— 
+APDU &gt;&gt;&gt;: 90 5A 00 00 03 00 00 00 00 
+APDU \&lt;\&lt;\&lt;: 91 00 
+doDESFireAutenticate ————————
+keyNo 00 
+keyValue 00 00">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="MFD40 DATA LOG"/>
+  <meta property="og:site_name" content="NG's Blog"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="NG's Blog" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">NG's Blog</a></h1>
+  <h2><a href="/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div></header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2013-10-08T02:02:18.000Z"><a href="/2013/10/08/2013-05-17-5/">10月 8 2013</a></time>
+      
+      
+  
+    <h1 class="title">MFD40 DATA LOG</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>commandSELECT_PICC ———————— </p>
+<p>APDU >>>: 90 5A 00 00 03 00 00 00 00 </p>
+<p>APDU \&lt;\&lt;\&lt;: 91 00 </p>
+<p>doDESFireAutenticate ————————</p>
+<p>keyNo 00 </p>
+<p>keyValue 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 </p>
+<p>APDU >>>: 90 0A 00 00 01 00 00 </p>
+<p>APDU \&lt;\&lt;\&lt;: FF 75 E8 C7 F5 FF 32 2B 91 AF </p>
+<p>RndA 00 00 00 00 00 00 00 00 </p>
+<p>ERndB FF 75 E8 C7 F5 FF 32 2B </p>
+<p>RndB CF AD C5 31 68 EE 5A 52 </p>
+<p>RndB1 AD C5 31 68 EE 5A 52 CF </p>
+<p>dkNo 00 00 00 00 00 00 00 00 AD C5 31 68 EE 5A 52 CF </p>
+<p>EdkNo 8C A6 4D E9 C1 B1 23 A7 A6 57 37 A3 8B 5F E8 56 </p>
+<p>APDU >>>: 90 AF 00 00 10 8C A6 4D E9 C1 B1 23 A7 A6 57 37 A3 8B 5F E8 56 00 </p>
+<p>APDU \&lt;\&lt;\&lt;: 8C A6 4D E9 C1 B1 23 A7 91 00 </p>
+<p>encRndA1 8C A6 4D E9 C1 B1 23 A7 </p>
+<p>RndA1 00 00 00 00 00 00 00 00 </p>
+<p>RndA 00 00 00 00 00 00 00 00 </p>
+<p>SessionKey 00 00 00 00 CF AD C5 31 </p>
+<p>commandFORMAT_PICC ———————— </p>
+<p>APDU >>>: 90 FC 00 00 00 </p>
+<p>APDU \&lt;\&lt;\&lt;: 91 00 </p>
+<p>commandSELECT_APPLICATION 0x01 ———————— </p>
+<p>APDU >>>: 90 CA 00 00 05 01 00 00 0F 01 00 </p>
+<p>APDU \&lt;\&lt;\&lt;: 91 00 </p>
+<p>commandSELECT_APPLICATION 0x01 ———————— </p>
+<p>APDU >>>: 90 5A 00 00 03 01 00 00 00 </p>
+<p>APDU \&lt;\&lt;\&lt;: 91 00 </p>
+<p>doDESFireAutenticate ————————</p>
+<p>keyNo 00 </p>
+<p>keyValue 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 </p>
+<p>APDU >>>: 90 0A 00 00 01 00 00 </p>
+<p>APDU \&lt;\&lt;\&lt;: A4 0E 38 CC 6E 5B 44 38 91 AF </p>
+<p>RndA 00 00 00 00 00 00 00 00 </p>
+<p>ERndB A4 0E 38 CC 6E 5B 44 38 </p>
+<p>RndB 75 59 2D E8 36 D8 26 1F </p>
+<p>RndB1 59 2D E8 36 D8 26 1F 75 </p>
+<p>dkNo 00 00 00 00 00 00 00 00 59 2D E8 36 D8 26 1F 75 </p>
+<p>EdkNo 8C A6 4D E9 C1 B1 23 A7 57 56 3F 77 4C FE E7 60 </p>
+<p>APDU >>>: 90 AF 00 00 10 8C A6 4D E9 C1 B1 23 A7 57 56 3F 77 4C FE E7 60 00 </p>
+<p>APDU \&lt;\&lt;\&lt;: 8C A6 4D E9 C1 B1 23 A7 91 00 </p>
+<p>encRndA1 8C A6 4D E9 C1 B1 23 A7 </p>
+<p>RndA1 00 00 00 00 00 00 00 00 </p>
+<p>RndA 00 00 00 00 00 00 00 00 </p>
+<p>SessionKey 00 00 00 00 75 59 2D E8 </p>
+<p>commandCHANGE_KEY_VALUE ———————— </p>
+<p>KeyNo 00 </p>
+<p>sessionKey 00 00 00 00 75 59 2D E8 </p>
+<p>newKey FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF </p>
+<p>crcBlock 37 CB </p>
+<p>newKey_crcBlock FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF 37 CB </p>
+<p>pKeyData FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF 37 CB 00 00 00 00 00 00 </p>
+<p>Block1 FF FF FF FF FF FF FF FF </p>
+<p>Block2 FF FF FF FF FF FF FF FF </p>
+<p>Block3 37 CB 00 00 00 00 00 00 </p>
+<p>xB1 FF FF FF FF FF FF FF FF </p>
+<p>DxB1 48 2A C1 3C 95 84 59 61 </p>
+<p>xB1corB2 B7 D5 3E C3 6A 7B A6 9E </p>
+<p>xB2corB3 2A 73 92 5C F7 93 AC 07 </p>
+<p>DxB3 98 ED 39 11 3D DF FD 56 </p>
+<p>DxB1_DxB2_DxB3 48 2A C1 3C 95 84 59 61 1D B8 92 5C F7 93 AC 07 98 ED 39 11 3D DF FD 56 </p>
+<p>APDU >>>: 90 C4 00 00 19 00 48 2A C1 3C 95 84 59 61 1D B8 92 5C F7 93 AC 07 98 ED 39 11 3D DF FD 56 00 </p>
+<p>APDU \&lt;\&lt;\&lt;: 91 00 </p>
+<p>doDESFireAutenticate ————————</p>
+<p>keyNo 00 </p>
+<p>keyValue FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF FF </p>
+<p>APDU >>>: 90 0A 00 00 01 00 00 </p>
+<p>APDU \&lt;\&lt;\&lt;: 99 9C A5 60 AC 7F 3E 13 91 AF </p>
+<p>RndA 00 00 00 00 00 00 00 00 </p>
+<p>ERndB 99 9C A5 60 AC 7F 3E 13 </p>
+<p>RndB 9C AC C6 3C 6D 88 96 DD </p>
+<p>RndB1 AC C6 3C 6D 88 96 DD 9C </p>
+<p>dkNo 00 00 00 00 00 00 00 00 AC C6 3C 6D 88 96 DD 9C </p>
+<p>EdkNo CA AA AF 4D EA F1 DB AE E5 02 E8 DF 32 65 44 71 </p>
+<p>APDU >>>: 90 AF 00 00 10 CA AA AF 4D EA F1 DB AE E5 02 E8 DF 32 65 44 71 00 </p>
+<p>APDU \&lt;\&lt;\&lt;: CA AA AF 4D EA F1 DB AE 91 00 </p>
+<p>encRndA1 CA AA AF 4D EA F1 DB AE </p>
+<p>RndA1 00 00 00 00 00 00 00 00 </p>
+<p>RndA 00 00 00 00 00 00 00 00 </p>
+<p>SessionKey 00 00 00 00 9C AC C6 3C </p>
+<p>commandCHANGE_KEY_VALUE ———————— </p>
+<p>KeyNo 00 </p>
+<p>sessionKey 00 00 00 00 9C AC C6 3C </p>
+<p>newKey 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 </p>
+<p>crcBlock 37 49 </p>
+<p>newKey_crcBlock 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 37 49 </p>
+<p>pKeyData 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 37 49 00 00 00 00 00 00 </p>
+<p>Block1 00 00 00 00 00 00 00 00 </p>
+<p>Block2 00 00 00 00 00 00 00 00 </p>
+<p>Block3 37 49 00 00 00 00 00 00 </p>
+<p>xB1 00 00 00 00 00 00 00 00 </p>
+<p>DxB1 3C 37 A5 45 D4 CE 35 0C </p>
+<p>xB1corB2 3C 37 A5 45 D4 CE 35 0C </p>
+<p>xB2corB3 EA FC 15 91 54 4F C9 11 </p>
+<p>DxB3 5D E8 6E 74 AA 64 E8 38 </p>
+<p>DxB1_DxB2_DxB3 3C 37 A5 45 D4 CE 35 0C DD B5 15 91 54 4F C9 11 5D E8 6E 74 AA 64 E8 38 </p>
+<p>APDU >>>: 90 C4 00 00 19 00 3C 37 A5 45 D4 CE 35 0C DD B5 15 91 54 4F C9 11 5D E8 6E 74 AA 64 E8 38 00 </p>
+<p>APDU \&lt;\&lt;\&lt;: 91 00 </p>
+<hr>
+<p>commandSELECT_PICC ———————— </p>
+<p>APDU >>>: 90 5A 00 00 03 00 00 00 00 </p>
+<p>APDU \&lt;\&lt;\&lt;: 91 00 </p>
+<p>doDESFireAutenticate ————————</p>
+<p>keyNo 00 </p>
+<p>keyValue 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 </p>
+<p>APDU >>>: 90 0A 00 00 01 00 00 </p>
+<p>APDU \&lt;\&lt;\&lt;: 11 70 A5 65 E7 5E 62 DA 91 AF </p>
+<p>RndA 00 00 00 00 00 00 00 00 </p>
+<p>ERndB 11 70 A5 65 E7 5E 62 DA </p>
+<p>RndB 03 07 FF 8A 1E C4 CB 5F </p>
+<p>RndB1 07 FF 8A 1E C4 CB 5F 03 </p>
+<p>dkNo 00 00 00 00 00 00 00 00 07 FF 8A 1E C4 CB 5F 03 </p>
+<p>EdkNo 8C A6 4D E9 C1 B1 23 A7 AA 39 C4 87 D0 7E 90 B5 </p>
+<p>APDU >>>: 90 AF 00 00 10 8C A6 4D E9 C1 B1 23 A7 AA 39 C4 87 D0 7E 90 B5 00 </p>
+<p>APDU \&lt;\&lt;\&lt;: 8C A6 4D E9 C1 B1 23 A7 91 00 </p>
+<p>encRndA1 8C A6 4D E9 C1 B1 23 A7 </p>
+<p>RndA1 00 00 00 00 00 00 00 00 </p>
+<p>RndA 00 00 00 00 00 00 00 00 </p>
+<p>SessionKey 00 00 00 00 03 07 FF 8A </p>
+<p>commandFORMAT_PICC ———————— </p>
+<p>APDU >>>: 90 FC 00 00 00 </p>
+<p>APDU \&lt;\&lt;\&lt;: 91 00 </p>
+<p>commandSELECT_APPLICATION 0x01 ———————— </p>
+<p>APDU >>>: 90 CA 00 00 05 01 00 00 0F 01 00 </p>
+<p>APDU \&lt;\&lt;\&lt;: 91 00 </p>
+<p>commandSELECT_APPLICATION 0x01 ———————— </p>
+<p>APDU >>>: 90 5A 00 00 03 01 00 00 00 </p>
+<p>APDU \&lt;\&lt;\&lt;: 91 00 </p>
+<p>doDESFireAutenticate ————————</p>
+<p>keyNo 00 </p>
+<p>keyValue 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 </p>
+<p>APDU >>>: 90 0A 00 00 01 00 00 </p>
+<p>APDU \&lt;\&lt;\&lt;: F6 01 FB 1E 22 46 43 04 91 AF </p>
+<p>RndA 00 00 00 00 00 00 00 00 </p>
+<p>ERndB F6 01 FB 1E 22 46 43 04 </p>
+<p>RndB B4 2B F7 F2 34 9F 67 69 </p>
+<p>RndB1 2B F7 F2 34 9F 67 69 B4 </p>
+<p>dkNo 00 00 00 00 00 00 00 00 2B F7 F2 34 9F 67 69 B4 </p>
+<p>EdkNo 8C A6 4D E9 C1 B1 23 A7 48 28 19 77 C0 D9 C6 E8 </p>
+<p>APDU >>>: 90 AF 00 00 10 8C A6 4D E9 C1 B1 23 A7 48 28 19 77 C0 D9 C6 E8 00 </p>
+<p>APDU \&lt;\&lt;\&lt;: 8C A6 4D E9 C1 B1 23 A7 91 00 </p>
+<p>encRndA1 8C A6 4D E9 C1 B1 23 A7 </p>
+<p>RndA1 00 00 00 00 00 00 00 00 </p>
+<p>RndA 00 00 00 00 00 00 00 00 </p>
+<p>SessionKey 00 00 00 00 B4 2B F7 F2 </p>
+<p>commandCHANGE_KEY_VALUE ———————— </p>
+<p>KeyNo 00 </p>
+<p>sessionKey 00 00 00 00 B4 2B F7 F2 </p>
+<p>newKey 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 </p>
+<p>crcBlock 97 EF </p>
+<p>newKey_crcBlock 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 97 EF </p>
+<p>pKeyData 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 97 EF 00 00 00 00 00 00 </p>
+<p>Block1 02 02 02 02 02 02 02 02 </p>
+<p>Block2 02 02 02 02 02 02 02 02 </p>
+<p>Block3 97 EF 00 00 00 00 00 00 </p>
+<p>xB1 02 02 02 02 02 02 02 02 </p>
+<p>DxB1 20 EE B7 40 D8 DB D2 FB </p>
+<p>xB1corB2 22 EC B5 42 DA D9 D0 F9 </p>
+<p>xB2corB3 99 0F B0 41 AB 1E 43 CB </p>
+<p>DxB3 70 B5 DC DE 61 2A 41 86 </p>
+<p>DxB1_DxB2_DxB3 20 EE B7 40 D8 DB D2 FB 0E E0 B0 41 AB 1E 43 CB 70 B5 DC DE 61 2A 41 86 </p>
+<p>APDU >>>: 90 C4 00 00 19 00 20 EE B7 40 D8 DB D2 FB 0E E0 B0 41 AB 1E 43 CB 70 B5 DC DE 61 2A 41 86 00 </p>
+<p>APDU \&lt;\&lt;\&lt;: 91 00 </p>
+<p>doDESFireAutenticate ————————</p>
+<p>keyNo 00 </p>
+<p>keyValue 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 02 </p>
+<p>APDU >>>: 90 0A 00 00 01 00 00 </p>
+<p>APDU \&lt;\&lt;\&lt;: 7D 26 C0 7B C9 D3 9D 43 91 AF </p>
+<p>RndA 00 00 00 00 00 00 00 00 </p>
+<p>ERndB 7D 26 C0 7B C9 D3 9D 43 </p>
+<p>RndB C4 6D F3 B6 33 1F 5A 5C </p>
+<p>RndB1 6D F3 B6 33 1F 5A 5C C4 </p>
+<p>dkNo 00 00 00 00 00 00 00 00 6D F3 B6 33 1F 5A 5C C4 </p>
+<p>EdkNo C4 AF 51 BD 0A 0F 8A DD 03 EA 58 A9 C5 BD E9 77 </p>
+<p>APDU >>>: 90 AF 00 00 10 C4 AF 51 BD 0A 0F 8A DD 03 EA 58 A9 C5 BD E9 77 00 </p>
+<p>APDU \&lt;\&lt;\&lt;: 91 AE</p>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+        
+  <div class="addthis addthis_toolbox addthis_default_style">
+    
+      <a class="addthis_button_facebook_like" fb:like:layout="button_count"></a>
+    
+    
+      <a class="addthis_button_tweet"></a>
+    
+    
+      <a class="addthis_button_google_plusone" g:plusone:size="medium"></a>
+    
+    
+      <a class="addthis_button_pinterest_pinit" pi:pinit:layout="horizontal"></a>
+    
+    <a class="addthis_counter addthis_pill_style"></a>
+  </div>
+  <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js"></script>
+
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:yoursite.com">
+  </form>
+</div>
+
+  
+
+  
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2013 NG
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+</body>
+</html>

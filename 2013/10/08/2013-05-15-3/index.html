@@ -1,0 +1,139 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>如何读取NFC手机钱包的余额 | NG's Blog</title>
+  <meta name="author" content="NG">
+  
+  <meta name="description" content="// select PSF (1PAY.SYS.DDF01) /*———————————————————————————*/beijing.Util.log(&quot;select file: tag.selectByName(DFN_PSE)&quot;);if (tag.selectByNam">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="如何读取NFC手机钱包的余额"/>
+  <meta property="og:site_name" content="NG's Blog"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="NG's Blog" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">NG's Blog</a></h1>
+  <h2><a href="/"></a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div></header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2013-10-08T02:02:18.000Z"><a href="/2013/10/08/2013-05-15-3/">10月 8 2013</a></time>
+      
+      
+  
+    <h1 class="title">如何读取NFC手机钱包的余额</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>// select PSF (1PAY.SYS.DDF01) /*———————————————————————————*/<br>beijing.Util.log(&quot;select file: tag.selectByName(DFN_PSE)&quot;);<br>if (tag.selectByName(DFN_PSE).isOkey()) {<br>protected final static byte[] DFN_PSE = { (byte) ‘1’, (byte) ‘P’,<br>(byte) ‘A’, (byte) ‘Y’, (byte) ‘.’, (byte) ‘S’, (byte) ‘Y’,<br>(byte) ‘S’, (byte) ‘.’, (byte) ‘D’, (byte) ‘D’, (byte) ‘F’,<br>(byte) ‘0’, (byte) ‘1’, }; //1PAY.SYS.DDF01<br>name = DFN_PSE;<br>ByteBuffer buff = ByteBuffer.allocate(name.length + 6);<br>buff.put((byte) 0x00); // CLA Class<br>buff.put((byte) 0xA4); // INS Instruction<br>buff.put((byte) 0x04); // P1 Parameter 1 SELECT by NAME<br>buff.put((byte) 0x00); // P2 Parameter 2<br>buff.put((byte) name.length); // Lc<br>buff.put(name); buff.put((byte) 0x00); // Le<br>SELECT命令参考<br>第1部分电子钱包电子存折应用卡片规范 之<br>  表33 SELECT 命令报文<br>  表34 SELECT 命令引用控制参数</p>
+<h1>如果返回结果结尾是 0x9000  ，就SELECT成功</h1>
+<p>SFI_EXTRA_LOG = 4;<br>// read card info file, binary (4)<br>/*———————————————————————————————*/</p>
+<h1>INFO = tag.readBinary(SFI_EXTRA_LOG);</h1>
+<p>SFI_EXTRA_CNT = 5;<br>// read card operation file, binary (5)<br>/*———————————————————————————————*/<br>CNT = tag.readBinary(SFI_EXTRA_CNT);<br>public Response readBinary(int sfi) {<br>final byte[] cmd = { (byte) 0x00, // CLA Class<br>(byte) 0xB0, // INS Instruction<br>(byte) (0x00000080 | (sfi &amp; 0x1F)), // P1 Parameter 1<br>(byte) 0x00, // P2 Parameter 2<br>(byte) 0x00, // Le<br>};<br>CNT = tag.readBinary(SFI_EXTRA_CNT);<br>参考：<br>第1部分电子钱包电子存折应用卡片规范 之 </p>
+<h1>表25 READ BINARY 命令报文</h1>
+<p>读余额之前的操作<br>// select Main Application<br>byte[] DFI_EP = { (byte) 0x10, (byte) 0x01 };<br>/*———————————————————————————————*/<br>if (tag.selectByID(DFI_EP).isOkey()) {<br>public Response selectByID(byte[] name) {<br>ByteBuffer buff = ByteBuffer.allocate(name.length + 6);<br>buff.put((byte) 0x00); // CLA Class<br>buff.put((byte) 0xA4); // INS Instruction<br>buff.put((byte) 0x00); // P1 Parameter 1 SELECT by ID<br>buff.put((byte) 0x00); // P2 Parameter 2<br>buff.put((byte) name.length); // Lc<br>buff.put(name); buff.put((byte) 0x00); // Le</p>
+<h1>return new Response(transceive(buff.array()));</h1>
+<p>读余额<br>CASH = tag.getBalance(true);<br>public Response getBalance(boolean isEP) {<br>final byte[] cmd = { (byte) 0x80, // CLA Class<br>(byte) 0x5C, // INS Instruction<br>(byte) 0x00, // P1 Parameter 1<br>(byte) (isEP ? 2 : 1), // P2 Parameter 2<br>(byte) 0x04, // Le<br>};<br>参考：<br><a href="http://blog.csdn.net/jennyvenus/article/details/4183994" target="_blank">http://blog.csdn.net/jennyvenus/article/details/4183994</a><br>//Get Balance                       (defined by PBOC)<br>80 5C 00 02 04<br>PBOC 第2部分(电子钱包_电子存折应用规范)<br>表2 命令的类别字节和指令字节<br>读余额（GET BALANCE）<br>‘80’ ‘5C’ ‘00’ ‘0X’</p>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+        
+  <div class="addthis addthis_toolbox addthis_default_style">
+    
+      <a class="addthis_button_facebook_like" fb:like:layout="button_count"></a>
+    
+    
+      <a class="addthis_button_tweet"></a>
+    
+    
+      <a class="addthis_button_google_plusone" g:plusone:size="medium"></a>
+    
+    
+      <a class="addthis_button_pinterest_pinit" pi:pinit:layout="horizontal"></a>
+    
+    <a class="addthis_counter addthis_pill_style"></a>
+  </div>
+  <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js"></script>
+
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:yoursite.com">
+  </form>
+</div>
+
+  
+
+  
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2013 NG
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+</body>
+</html>
