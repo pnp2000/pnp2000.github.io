@@ -5,34 +5,22 @@
   
   <title>手机SIM卡破解原理 | NG's Blog</title>
   <meta name="author" content="NG">
+
   
   <meta name="description" content="我们一般用的手机sim卡里面有三组数值是关键的：IMSI、ICCID和ki，有了这三组数值，你的sim卡就能被复制。市面上卖的一卡多号其实就是通过读取sim卡这三组数值，将他们写到一张特殊的卡上，从而达到复制的目的。IMSI和ICCID可以直接读取，ki却是加密的。下面简单讲讲GSM加密：
 GSM的">
   
   
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta property="og:title" content="手机SIM卡破解原理"/>
-  <meta property="og:site_name" content="NG's Blog"/>
-
-  
-    <meta property="og:image" content="undefined"/>
-  
-
-  <link href="/favicon.png" rel="icon">
   <link rel="alternate" href="/atom.xml" title="NG's Blog" type="application/atom+xml">
   <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
   <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
   
 </head>
 
-
 <body>
-  <header id="header" class="inner"><div class="alignleft">
-  <h1><a href="/">NG's Blog</a></h1>
-  <h2><a href="/"></a></h2>
-</div>
-<nav id="main-nav" class="alignright">
+  <header id="header" class="inner"><nav>
   <ul>
     
       <li><a href="/">Home</a></li>
@@ -40,27 +28,22 @@ GSM的">
       <li><a href="/archives">Archives</a></li>
     
   </ul>
-  <div class="clearfix"></div>
-</nav>
-<div class="clearfix"></div></header>
-  <div id="content" class="inner">
-    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+</nav></header>
+  <div id="content" class="inner"><article class="post">
   
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2013-10-08T02:02:18.000Z"><a href="/2013/10/08/2013-06-14-9/">10月 8 2013</a></time>
-      
-      
+  <header>
+    
   
     <h1 class="title">手机SIM卡破解原理</h1>
   
 
-    </header>
-    <div class="entry">
-      
-        <p>我们一般用的手机sim卡里面有三组数值是关键的：IMSI、ICCID和ki，有了这三组数值，你的sim卡就能被复制。市面上卖的一卡多号其实就是通过读取sim卡这三组数值，将他们写到一张特殊的卡上，从而达到复制的目的。IMSI和ICCID可以直接读取，ki却是加密的。下面简单讲讲GSM加密：</p>
+    <time datetime="2013-10-08T02:02:18.000Z">
+  <span class="day">8</span><span class="month">10月</span>
+</time>
+  </header>
+  <div class="entry-content">
+    
+      <p>我们一般用的手机sim卡里面有三组数值是关键的：IMSI、ICCID和ki，有了这三组数值，你的sim卡就能被复制。市面上卖的一卡多号其实就是通过读取sim卡这三组数值，将他们写到一张特殊的卡上，从而达到复制的目的。IMSI和ICCID可以直接读取，ki却是加密的。下面简单讲讲GSM加密：</p>
 <p>GSM的加密系统里面大致涉及三种算法，A3、A5、A8，这些并不特定指代什么算法，只是给出算法的输入和输出规范，以及对算法的要求，GSM对于每种算法各有一个范例实现，理论上并没有限制大家使用哪种算法。但是世界上的设备商和运营商都是懒得沟通的，看到既然有了范例已经实现，就都拿来用了，于是全世界的SIM卡的破解方法都一样。</p>
 <p>说到这里就不能不简单介绍一下SIM卡，SIM卡是一种智能卡片，里面有个非常简单的CPU和一点NVRAM，可以存储和读出数据，还可以进行一些运算。卡里面有很多内容，不过只介绍和加密相关的。每张SIM卡里面一般都存着一个全球唯一的标志号，叫做IMSI，这个是用来唯一标识你SIM卡的，手机在开机时候会从卡里面读出这个号发给移动网络，移动那里有一个很大的数据库，描述了IMSI和手机号的对应关系，于是网络就知道你的手机号是多少了（如果你手机卡丢了去补，新补来的卡IMSI和原有的不同，而移动数据库那里将你原来的手机号指向新的IMSI，旧的卡就再也不能用了）除了IMSI，还有16个字节的密钥数据，这个数据是无法通过 SIM 卡的接口读出的，通常称为Ki，Ki在移动网络那边也保存了一份。</p>
 <p>在手机登录移动网络的时候，移动网络会产生一个16字节的随机数据（通常称为RAND）发给手机，手机将这个数据发给SIM卡，SIM卡用自己的密钥Ki和RAND做运算以后，生成一个4字节的应答（SRES）发回给手机，并转发给移动网络，与此同时，移动网络也进行了相同算法的运算，移动网络会比较一下这两个结果是否相同，相同就表明这个卡是我发出来的，允许其登录。这个验证算法在GSM规范里面叫做A3，m=128 bit，k=128 bit，c=32 bit，很显然，这个算法要求已知m和k可以很简单的算出c，但是已知m和c却很难算出k 。A3算法是做在SIM卡里面的，因此如果运营商想更换加密算法，他只要发行自己的SIM卡，让自己的基站和SIM卡都使用相同的算法就可以了，手机完全不用换。</p>
@@ -71,57 +54,31 @@ GSM的">
 <p>随着时间的推移，针对Comp128的破解算法越来越成熟，SIM复制设备也越来越多，运营商们终于坐不住了。很多运营商都开始发行Comp128 v2加密算法的卡了。Comp128 v2算法是GSM协会在v1被攻破以后，迅速在v1上面修改得来的结果，据说比较好的解决了v1算法中的弱点，当然，这个算法像v1一样，还是不公布于众的，而且到现在也没有人公布出来。这样一来，基本就没法解了。</p>
 <p>中国的运营商同样也遇到了SIM卡被复制问题，这里我主要讲讲中国移动。大约从2005年下半年发行的卡开始，已经不能直接用simscan等软件读出ki，但是，这并不是真正v2卡。有消息指出，v2卡虽然解决了能被复制的漏洞，但是兼容性和稳定性方面不尽人意。聪明的中国移动当然不会不管这个问题，它在成熟的v1卡基础上，自己做了小小的修改，巧妙的躲避了simscan等软件的扫描，达到不被复制的目的。这种卡我们暂时称作v0卡。v0卡是中国移动自己设计出来，据说是改变了原来ki的配对规律，使常规的扫描无法读出ki。本文的核心内容，就是讲述如何读出v0卡的ki。</p>
 
+    
+    
+    <footer class="meta">
       
-    </div>
-    <footer>
       
-        
-        
-		<!-- Baidu Button BEGIN -->
-		<div id="bdshare" class="bdshare_t bds_tools get-codes-bdshare">
-		<span class="bds_more">分享到：</span>
-		<a class="bds_qzone"></a>
-		<a class="bds_tsina"></a>
-		<a class="bds_tqq"></a>
-		<a class="bds_renren"></a>
-		<a class="bds_t163"></a>
-		<a class="shareCount"></a>
-		</div>
-		<script type="text/javascript" id="bdshare_js" data="type=tools&amp;uid=778444" ></script>
-		<script type="text/javascript" id="bdshell_js"></script>
-		<script type="text/javascript">
-		document.getElementById("bdshell_js").src = "http://bdimg.share.baidu.com/static/js/shell_v2.js?cdnversion=" + Math.ceil(new Date()/3600000)
-		</script>
-		<!-- Baidu Button END -->
       
-      <div class="clearfix"></div>
     </footer>
+    
   </div>
-</article>
-
-</div></div>
-    <aside id="sidebar" class="alignright">
-  <div class="search">
-  <form action="//google.com/search" method="get" accept-charset="utf-8">
-    <input type="search" name="q" results="0" placeholder="搜索">
-    <input type="hidden" name="q" value="site:pnp2000.github.io">
-  </form>
+  
+</article></div>
+  <footer id="footer" class="inner"><div class="social alignright">
+  
+  
+  
+  
+  <a class="rss" href="/atom.xml" title="RSS">RSS</a>
 </div>
-
-  
-
-  
-</aside>
-    <div class="clearfix"></div>
-  </div>
-  <footer id="footer" class="inner"><div class="alignleft">
+<p>
   
   &copy; 2013 NG
   
-</div>
+</p>
 <div class="clearfix"></div></footer>
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
-<script src="/js/jquery.imagesloaded.min.js"></script>
+  <script src="/js/jquery.imagesloaded.min.js"></script>
 <script src="/js/gallery.js"></script>
 
 
@@ -135,5 +92,12 @@ GSM的">
 })(jQuery);
 </script>
 
+
+<div id="phasebeam">
+  <canvas></canvas>
+  <canvas></canvas>
+  <canvas></canvas>
+</div>
+<script src="/js/phasebeam.js"></script>
 </body>
 </html>

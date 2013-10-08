@@ -5,33 +5,21 @@
   
   <title>Java Card 认证过程 | NG's Blog</title>
   <meta name="author" content="NG">
+
   
   <meta name="description" content="在SCP02的规则下打开安全通道的流程大致如下：显式打开安全通道由两条命令来完成：1，INITIALIZE UPDATE2，EXTERNAL AUTHENTICATE具体命令解释如下：1，INITIALIZ E UPDATE:80 50 00 00 08 XX XX XX XX XX XX XX X">
   
   
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta property="og:title" content="Java Card 认证过程"/>
-  <meta property="og:site_name" content="NG's Blog"/>
-
-  
-    <meta property="og:image" content="undefined"/>
-  
-
-  <link href="/favicon.png" rel="icon">
   <link rel="alternate" href="/atom.xml" title="NG's Blog" type="application/atom+xml">
   <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
   <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
   
 </head>
 
-
 <body>
-  <header id="header" class="inner"><div class="alignleft">
-  <h1><a href="/">NG's Blog</a></h1>
-  <h2><a href="/"></a></h2>
-</div>
-<nav id="main-nav" class="alignright">
+  <header id="header" class="inner"><nav>
   <ul>
     
       <li><a href="/">Home</a></li>
@@ -39,94 +27,49 @@
       <li><a href="/archives">Archives</a></li>
     
   </ul>
-  <div class="clearfix"></div>
-</nav>
-<div class="clearfix"></div></header>
-  <div id="content" class="inner">
-    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+</nav></header>
+  <div id="content" class="inner"><article class="post">
   
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2013-10-08T02:02:18.000Z"><a href="/2013/10/08/2013-05-21-6/">10月 8 2013</a></time>
-      
-      
+  <header>
+    
   
     <h1 class="title">Java Card 认证过程</h1>
   
 
-    </header>
-    <div class="entry">
-      
-        <p>在SCP02的规则下打开安全通道的流程大致如下：<br>显式打开安全通道由两条命令来完成：<br>1，INITIALIZE UPDATE<br>2，EXTERNAL AUTHENTICATE<br>具体命令解释如下：<br>1，INITIALIZ E UPDATE:80 50 00 00 08 XX XX XX XX XX XX XX XX<br>解释下这条命令，这条命令实际上就是向智能卡送入一个随机数（8个XX），这个随机数产生的规则由主机程序自己定义。GP规范中称其为Host Challange<br>智能卡收到这条命令之后就会返回28个字节的响应数据，返回的数据包括：Key diversification(10Bytes)|key information(2Bytes)|</p>
-<h1>sequence Counter(2Bytes)|card challenge(6bytes)|card cryptogram(8BYtes),参考下面的实例。</h1>
-<p>exchangeapdu “0x80 0x50 0x00 0x00 0x08 0x01 0x02 0x03 0x04 0x05 0x06 0x07 0x08”<br>SEND -> HEADER: 80 50 00 00 Lc = 008d</p>
-<h2>0 1 2 3 4 5 6 7 8 9 A B C D E F</h2>
-<p>00| 01 02 03 04 05 06 07 08 </p>
-<p>//host challenge: 01 02 03 04 05 06 07 08<br>RECEIVE -> STATUS: 611C<br>SEND -> GET RESPONSE<br>HEADER: 80 C0 00 00 Le = 028d<br>ECEIVE -> STATUS: 9000</p>
-<h2>0 1 2 3 4 5 6 7 8 9 A B C D E F</h2>
-<p>00| 00 00 72 95 71 32 36 00 68 68 FF 02 00 08 8B 32<br>01| 0E C6 0E 9B F5 A6 DB F1 B3 FE B8 75<br>//以上这段是智能卡在收到Host Challenge之后的Response。<br>//Key diversification: 00 00 72 95 71 32 36 00 68 68<br>//key information: FF 02<br>//sequence Counter: 00 08<br>//card challenge: 8B 32 0E C6 0E 9B</p>
-<h1>//card cryptogram: F5 A6 DB F1 B3 FE B8 75</h1>
-<p>首先外部应用程序需要认证智能卡，也就是根据智能卡传回的数据和自己产生的Host Challenge以及应用程序事先应该知道的静态KEY<br>按照一定的规则计算出一个密文出来和卡返回的card cryptogram，进行比较，如果一致的那说明卡通过了外部应用程序的认证。<br>Host根据卡返回的数据校验card cryptogram的过程如下：<br>首先需要根据静态的Key(下面计算过程中的静态Key全部是0x40 0x41 0x42 0x43 0x44 0x45 0x46 0x47 0x48 0x49 0x4a 0x4b 0x4c 0x4d 0x4e 0x4f)<br>产生一套SessionKey,包括C-MAC Session Key，R-MAC Session Key，S-ENC Session Key，S-DEK Session Key<br>这4种SessionKey。<br>按照SCP02的规则产生Session Keys的过程如下：<br>step1:  Generating the Secure Channel C-MAC session keys<br>  Derivation Data = Constant(2bytes) | Sequence Counter(2bytes) | 00 00…00(12bytes)<br>      = 01 01 00 08 00 00 00 00 00 00 00 00 00 00 00 00<br>  C-MAC Session Key = 3DES-CBC[S-MAC](Derivation Data) = 01 5a 6c 21 17 aa ae 94 57 61 4e 5d af 04 29 b9<br>step2: Generating the Secure Channel R-MAC session keys<br>  Derivation Data = Constant(2bytes) | Sequence Counter(2bytes) | 00 00…00(12bytes)<br>      = 01 02 00 08 00 00 00 00 00 00 00 00 00 00 00 00<br>  R-MAC Session Key = 3DES-CBC[S-MAC](Derivation Data) = a4 82 e6 d5 a5 d3 83 13 0b b2 71 a8 57 8f 3b 16<br>step3: Generating the Secure Channel encryption session keys<br>  Derivation Data = Constant(2bytes) | Sequence Counter(2bytes) | 00 00…00(12bytes)<br>      = 01 82 00 08 00 00 00 00 00 00 00 00 00 00 00 00<br>  S-ENC Session Key = 3DES-CBC[S-MAC](Derivation Data) = 64 0d 58 ca 61 ad 53 ba bb e5 48 36 8d 81 da 20<br>step4: Generating the Secure Channel data encryption session keys<br>  Derivation Data = Constant(2bytes) | Sequence Counter(2bytes) | 00 00…00(12bytes)<br>      = 01 81 00 08 00 00 00 00 00 00 00 00 00 00 00 00<br>  S-DEK Session Key = 3DES-CBC[S-MAC](Derivation Data) = b4 f7 5c e0 a9 5e a3 f8 6b bd 05 1c b7 7c 0f ae<br>在SCP02规则下计算Card Authentication Cryptogram的过程如下：<br>  ICV = 00 00 00 00 00 00 00 00<br>  Derivation Data = 8bytes Host Challange | 2bytes Sequence Counter | 6bytes Card Challange | 80 00 00 00 00 00 00 00<br>      = 01 02 03 04 05 06 07 08 00 08 8B 32 0E C6 0E 9B 80 00 00 00 00 00 00 00<br>  Card Cryptogram = 3DES-CBC[S-ENC Session Key | ICV](Derivation Data)<br>      = F5 A6 DB F1 B3 FE B8 75<br>//Host 计算出来自己的Card Cryptogram再去和卡传回来的比较，就完成了外部程序认证卡的过程。<br>Host计算出来的Card Cryptogram和卡传回来的是一致的，第一步完成了！<br>接下来卡还要认证外部应用程序，外部应用程序同样根据卡传回来的数据和Host Challenge计算一个Host Cryptogram传给卡，卡内部<br>会来校验传给卡的数据的合法性的<br>看看怎样来计算Host Authentication Cryptogram，其过程如下：<br>  ICV = 00 00 00 00 00 00 00 00<br>  Derivation Data = 2bytes Sequence Counter | 6bytes Card Challange | 8bytes Host Challange | 80 00 00 00 00 00 00 00<br>      = 00 08 8B 32 0E C6 0E 9B 01 02 03 04 05 06 07 08 80 00 00 00 00 00 00 00<br>  Host Cryptogram = 3DES-CBC[S-ENC Session Key | ICV](Derivation Data)<br>      = b9 8d e2 87 b7 7f 7d 30<br>计算好了Host Cryptogram之后，由于传给卡的数据需要带MAC校验值，下面看看C-MAC的计算规则。<br>HOST把Host Cryptogram传送给智能卡是通过命令EXTERNAL AUTHENTICATE来实现的。<br>其命令结构是：APDU Header | Host Cryptogram(8Bytes) | MAC(8Bytes)<br>   其中APDU Header = 84 82 00 00 10<br>接着就需要计算C-MAC值了，其过程如下：<br>  ICV = 00 00 00 00 00 00 00 00<br>  Derivation Data = APDU Header | Host Cryptogram(Data Filed) | (padding value)<br>      = 84 82 00 00 10 b9 8d e2 87 b7 7f 7d 30 80 00 00<br>  把Derivation Data分割为2个部分：DerivationData_lefthalf = 84 82 00 00 10 b9 8d e2<br>          DerivationData_righthalf= 87 b7 7f 7d 30 80 00 00<br>  ICV1 = DES-CBC<a href="DerivationData\_lefthalf">first half of C-MAC Session Key | ICV</a><br>   = B8 01 83 80 5F 24 DF 56<br>  MAC = 3DES-CBC<a href="DerivationData\_righthalf">C-MAC Session Key | ICV1</a><br>   = 33 7B 1E E8 E3 C8 9A DA</p>
-<h1>计算好了MAC值，就可以把Host Challenge 和 MAC一起通过如下命令发送到智能卡验证是否成功！</h1>
-<p>exchangeapdu “0x84 0x82 0x00 0x00 0x10 0xb9 0x8d 0xe2 0x87 0xb7 0x7f 0x7d 0x30 0x33 0x7B 0x1E 0xE8 0xE3 0xC8 0x9A 0xDA”<br>SEND -> HEADER: 84 82 00 00 Lc = 016d</p>
-<h2>0 1 2 3 4 5 6 7 8 9 A B C D E F</h2>
-<p>00| B9 E2 87 B7 7F 7D 30 33 7B 1E E8 E3 C8 9A DA </p>
-<h1>RECEIVE -> STATUS: 9000</h1>
-<p>打开安全通道成功</p>
+    <time datetime="2013-10-08T02:02:18.000Z">
+  <span class="day">8</span><span class="month">10月</span>
+</time>
+  </header>
+  <div class="entry-content">
+    
+      <p>在SCP02的规则下打开安全通道的流程大致如下：<br>显式打开安全通道由两条命令来完成：<br>1，INITIALIZE UPDATE<br>2，EXTERNAL AUTHENTICATE<br>具体命令解释如下：<br>1，INITIALIZ E UPDATE:80 50 00 00 08 XX XX XX XX XX XX XX XX<br>解释下这条命令，这条命令实际上就是向智能卡送入一个随机数（8个XX），这个随机数产生的规则由主机程序自己定义。GP规范中称其为Host Challange<br>智能卡收到这条命令之后就会返回28个字节的响应数据，返回的数据包括：Key diversification(10Bytes)|key information(2Bytes)|<br>sequence Counter(2Bytes)|card challenge(6bytes)|card cryptogram(8BYtes),参考下面的实例。<br>\====================================================================================================================<br>exchangeapdu “0x80 0x50 0x00 0x00 0x08 0x01 0x02 0x03 0x04 0x05 0x06 0x07 0x08”<br>SEND -> HEADER: 80 50 00 00 Lc = 008d<br>0 1 2 3 4 5 6 7 8 9 A B C D E F<br>-———————————————————————-<br>00| 01 02 03 04 05 06 07 08 </p>
+<p>//host challenge: 01 02 03 04 05 06 07 08<br>RECEIVE -> STATUS: 611C<br>SEND -> GET RESPONSE<br>HEADER: 80 C0 00 00 Le = 028d<br>ECEIVE -> STATUS: 9000<br>0 1 2 3 4 5 6 7 8 9 A B C D E F<br>-———————————————————————-<br>00| 00 00 72 95 71 32 36 00 68 68 FF 02 00 08 8B 32<br>01| 0E C6 0E 9B F5 A6 DB F1 B3 FE B8 75<br>//以上这段是智能卡在收到Host Challenge之后的Response。<br>//Key diversification: 00 00 72 95 71 32 36 00 68 68<br>//key information: FF 02<br>//sequence Counter: 00 08<br>//card challenge: 8B 32 0E C6 0E 9B<br>//card cryptogram: F5 A6 DB F1 B3 FE B8 75<br>\========================================================================================================================<br>首先外部应用程序需要认证智能卡，也就是根据智能卡传回的数据和自己产生的Host Challenge以及应用程序事先应该知道的静态KEY<br>按照一定的规则计算出一个密文出来和卡返回的card cryptogram，进行比较，如果一致的那说明卡通过了外部应用程序的认证。<br>Host根据卡返回的数据校验card cryptogram的过程如下：<br>首先需要根据静态的Key(下面计算过程中的静态Key全部是0x40 0x41 0x42 0x43 0x44 0x45 0x46 0x47 0x48 0x49 0x4a 0x4b 0x4c 0x4d 0x4e 0x4f)<br>产生一套SessionKey,包括C-MAC Session Key，R-MAC Session Key，S-ENC Session Key，S-DEK Session Key<br>这4种SessionKey。<br>按照SCP02的规则产生Session Keys的过程如下：<br>step1:  Generating the Secure Channel C-MAC session keys<br>  Derivation Data = Constant(2bytes) | Sequence Counter(2bytes) | 00 00…00(12bytes)<br>      = 01 01 00 08 00 00 00 00 00 00 00 00 00 00 00 00<br>  C-MAC Session Key = 3DES-CBC[S-MAC](Derivation Data) = 01 5a 6c 21 17 aa ae 94 57 61 4e 5d af 04 29 b9<br>step2: Generating the Secure Channel R-MAC session keys<br>  Derivation Data = Constant(2bytes) | Sequence Counter(2bytes) | 00 00…00(12bytes)<br>      = 01 02 00 08 00 00 00 00 00 00 00 00 00 00 00 00<br>  R-MAC Session Key = 3DES-CBC[S-MAC](Derivation Data) = a4 82 e6 d5 a5 d3 83 13 0b b2 71 a8 57 8f 3b 16<br>step3: Generating the Secure Channel encryption session keys<br>  Derivation Data = Constant(2bytes) | Sequence Counter(2bytes) | 00 00…00(12bytes)<br>      = 01 82 00 08 00 00 00 00 00 00 00 00 00 00 00 00<br>  S-ENC Session Key = 3DES-CBC[S-MAC](Derivation Data) = 64 0d 58 ca 61 ad 53 ba bb e5 48 36 8d 81 da 20<br>step4: Generating the Secure Channel data encryption session keys<br>  Derivation Data = Constant(2bytes) | Sequence Counter(2bytes) | 00 00…00(12bytes)<br>      = 01 81 00 08 00 00 00 00 00 00 00 00 00 00 00 00<br>  S-DEK Session Key = 3DES-CBC[S-MAC](Derivation Data) = b4 f7 5c e0 a9 5e a3 f8 6b bd 05 1c b7 7c 0f ae<br>在SCP02规则下计算Card Authentication Cryptogram的过程如下：<br>  ICV = 00 00 00 00 00 00 00 00<br>  Derivation Data = 8bytes Host Challange | 2bytes Sequence Counter | 6bytes Card Challange | 80 00 00 00 00 00 00 00<br>      = 01 02 03 04 05 06 07 08 00 08 8B 32 0E C6 0E 9B 80 00 00 00 00 00 00 00<br>  Card Cryptogram = 3DES-CBC[S-ENC Session Key | ICV](Derivation Data)<br>      = F5 A6 DB F1 B3 FE B8 75<br>//Host 计算出来自己的Card Cryptogram再去和卡传回来的比较，就完成了外部程序认证卡的过程。<br>Host计算出来的Card Cryptogram和卡传回来的是一致的，第一步完成了！<br>接下来卡还要认证外部应用程序，外部应用程序同样根据卡传回来的数据和Host Challenge计算一个Host Cryptogram传给卡，卡内部<br>会来校验传给卡的数据的合法性的<br>看看怎样来计算Host Authentication Cryptogram，其过程如下：<br>  ICV = 00 00 00 00 00 00 00 00<br>  Derivation Data = 2bytes Sequence Counter | 6bytes Card Challange | 8bytes Host Challange | 80 00 00 00 00 00 00 00<br>      = 00 08 8B 32 0E C6 0E 9B 01 02 03 04 05 06 07 08 80 00 00 00 00 00 00 00<br>  Host Cryptogram = 3DES-CBC[S-ENC Session Key | ICV](Derivation Data)<br>      = b9 8d e2 87 b7 7f 7d 30<br>计算好了Host Cryptogram之后，由于传给卡的数据需要带MAC校验值，下面看看C-MAC的计算规则。<br>HOST把Host Cryptogram传送给智能卡是通过命令EXTERNAL AUTHENTICATE来实现的。<br>其命令结构是：APDU Header | Host Cryptogram(8Bytes) | MAC(8Bytes)<br>   其中APDU Header = 84 82 00 00 10<br>接着就需要计算C-MAC值了，其过程如下：<br>  ICV = 00 00 00 00 00 00 00 00<br>  Derivation Data = APDU Header | Host Cryptogram(Data Filed) | (padding value)<br>      = 84 82 00 00 10 b9 8d e2 87 b7 7f 7d 30 80 00 00<br>  把Derivation Data分割为2个部分：DerivationData_lefthalf = 84 82 00 00 10 b9 8d e2<br>          DerivationData_righthalf= 87 b7 7f 7d 30 80 00 00<br>  ICV1 = DES-CBC<a href="DerivationData\_lefthalf">first half of C-MAC Session Key | ICV</a><br>   = B8 01 83 80 5F 24 DF 56<br>  MAC = 3DES-CBC<a href="DerivationData\_righthalf">C-MAC Session Key | ICV1</a><br>   = 33 7B 1E E8 E3 C8 9A DA<br>计算好了MAC值，就可以把Host Challenge 和 MAC一起通过如下命令发送到智能卡验证是否成功！<br>\=======================================================================================================================<br>exchangeapdu “0x84 0x82 0x00 0x00 0x10 0xb9 0x8d 0xe2 0x87 0xb7 0x7f 0x7d 0x30 0x33 0x7B 0x1E 0xE8 0xE3 0xC8 0x9A 0xDA”<br>SEND -> HEADER: 84 82 00 00 Lc = 016d<br>0 1 2 3 4 5 6 7 8 9 A B C D E F<br>-———————————————————————-<br>00| B9 E2 87 B7 7F 7D 30 33 7B 1E E8 E3 C8 9A DA<br>RECEIVE -> STATUS: 9000<br>\=======================================================================================================================<br>打开安全通道成功</p>
 
+    
+    
+    <footer class="meta">
       
-    </div>
-    <footer>
       
-        
-        
-		<!-- Baidu Button BEGIN -->
-		<div id="bdshare" class="bdshare_t bds_tools get-codes-bdshare">
-		<span class="bds_more">分享到：</span>
-		<a class="bds_qzone"></a>
-		<a class="bds_tsina"></a>
-		<a class="bds_tqq"></a>
-		<a class="bds_renren"></a>
-		<a class="bds_t163"></a>
-		<a class="shareCount"></a>
-		</div>
-		<script type="text/javascript" id="bdshare_js" data="type=tools&amp;uid=778444" ></script>
-		<script type="text/javascript" id="bdshell_js"></script>
-		<script type="text/javascript">
-		document.getElementById("bdshell_js").src = "http://bdimg.share.baidu.com/static/js/shell_v2.js?cdnversion=" + Math.ceil(new Date()/3600000)
-		</script>
-		<!-- Baidu Button END -->
       
-      <div class="clearfix"></div>
     </footer>
+    
   </div>
-</article>
-
-</div></div>
-    <aside id="sidebar" class="alignright">
-  <div class="search">
-  <form action="//google.com/search" method="get" accept-charset="utf-8">
-    <input type="search" name="q" results="0" placeholder="搜索">
-    <input type="hidden" name="q" value="site:pnp2000.github.io">
-  </form>
+  
+</article></div>
+  <footer id="footer" class="inner"><div class="social alignright">
+  
+  
+  
+  
+  <a class="rss" href="/atom.xml" title="RSS">RSS</a>
 </div>
-
-  
-
-  
-</aside>
-    <div class="clearfix"></div>
-  </div>
-  <footer id="footer" class="inner"><div class="alignleft">
+<p>
   
   &copy; 2013 NG
   
-</div>
+</p>
 <div class="clearfix"></div></footer>
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
-<script src="/js/jquery.imagesloaded.min.js"></script>
+  <script src="/js/jquery.imagesloaded.min.js"></script>
 <script src="/js/gallery.js"></script>
 
 
@@ -140,5 +83,12 @@
 })(jQuery);
 </script>
 
+
+<div id="phasebeam">
+  <canvas></canvas>
+  <canvas></canvas>
+  <canvas></canvas>
+</div>
+<script src="/js/phasebeam.js"></script>
 </body>
 </html>

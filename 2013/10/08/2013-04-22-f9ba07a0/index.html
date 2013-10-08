@@ -5,34 +5,22 @@
   
   <title>VC中PCSC操作读卡器 | NG's Blog</title>
   <meta name="author" content="NG">
+
   
   <meta name="description" content="1 引言
 完整的智能卡应用系统由后台服务程序、主机或终端应用程序和智能卡等组成，如图1所示。其中，后台服务程序提供了支持智能卡的服务。例如，在一个电子付款系统中，后台服务程序可以提供到信用卡和帐户信息的访问；主机或终端应用程序一般存在于台式机或者终端、电子付款终端、手机或者一个安全子系统中，终端应用">
   
   
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta property="og:title" content="VC中PCSC操作读卡器"/>
-  <meta property="og:site_name" content="NG's Blog"/>
-
-  
-    <meta property="og:image" content="undefined"/>
-  
-
-  <link href="/favicon.png" rel="icon">
   <link rel="alternate" href="/atom.xml" title="NG's Blog" type="application/atom+xml">
   <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
   <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
   
 </head>
 
-
 <body>
-  <header id="header" class="inner"><div class="alignleft">
-  <h1><a href="/">NG's Blog</a></h1>
-  <h2><a href="/"></a></h2>
-</div>
-<nav id="main-nav" class="alignright">
+  <header id="header" class="inner"><nav>
   <ul>
     
       <li><a href="/">Home</a></li>
@@ -40,27 +28,22 @@
       <li><a href="/archives">Archives</a></li>
     
   </ul>
-  <div class="clearfix"></div>
-</nav>
-<div class="clearfix"></div></header>
-  <div id="content" class="inner">
-    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+</nav></header>
+  <div id="content" class="inner"><article class="post">
   
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2013-10-08T02:02:18.000Z"><a href="/2013/10/08/2013-04-22-f9ba07a0/">10月 8 2013</a></time>
-      
-      
+  <header>
+    
   
     <h1 class="title">VC中PCSC操作读卡器</h1>
   
 
-    </header>
-    <div class="entry">
-      
-        <p>1 引言</p>
+    <time datetime="2013-10-08T02:02:18.000Z">
+  <span class="day">8</span><span class="month">10月</span>
+</time>
+  </header>
+  <div class="entry-content">
+    
+      <p>1 引言</p>
 <pre><code>完整的智能卡应用系统由后台服务程序、主机或终端应用程序和智能卡等组成，如图<span class="number">1</span>所示。其中，后台服务程序提供了支持智能卡的服务。例如，在一个电子付款系统中，后台服务程序可以提供到信用卡和帐户信息的访问；主机或终端应用程序一般存在于台式机或者终端、电子付款终端、手机或者一个安全子系统中，终端应用程序要处理用户、智能卡和后台服务程序之间的通讯；智能卡则存储用户的一些信息。
 
 终端应用程序需要通过读卡器来访问智能卡，在一个系统中，通常存在多家厂商提供的读卡器，因此需要一个统一的读卡器设备驱动接口。
@@ -332,57 +315,31 @@ lReturn = SCardListReaders(hSC, <span class="literal">NULL</span>, (LPTSTR)mszRe
 <p>};</p>
 <pre><code>   这样，我们就可以方便地使用PC/SC接口了。</code></pre>
 
+    
+    
+    <footer class="meta">
       
-    </div>
-    <footer>
       
-        
-        
-		<!-- Baidu Button BEGIN -->
-		<div id="bdshare" class="bdshare_t bds_tools get-codes-bdshare">
-		<span class="bds_more">分享到：</span>
-		<a class="bds_qzone"></a>
-		<a class="bds_tsina"></a>
-		<a class="bds_tqq"></a>
-		<a class="bds_renren"></a>
-		<a class="bds_t163"></a>
-		<a class="shareCount"></a>
-		</div>
-		<script type="text/javascript" id="bdshare_js" data="type=tools&amp;uid=778444" ></script>
-		<script type="text/javascript" id="bdshell_js"></script>
-		<script type="text/javascript">
-		document.getElementById("bdshell_js").src = "http://bdimg.share.baidu.com/static/js/shell_v2.js?cdnversion=" + Math.ceil(new Date()/3600000)
-		</script>
-		<!-- Baidu Button END -->
       
-      <div class="clearfix"></div>
     </footer>
+    
   </div>
-</article>
-
-</div></div>
-    <aside id="sidebar" class="alignright">
-  <div class="search">
-  <form action="//google.com/search" method="get" accept-charset="utf-8">
-    <input type="search" name="q" results="0" placeholder="搜索">
-    <input type="hidden" name="q" value="site:pnp2000.github.io">
-  </form>
+  
+</article></div>
+  <footer id="footer" class="inner"><div class="social alignright">
+  
+  
+  
+  
+  <a class="rss" href="/atom.xml" title="RSS">RSS</a>
 </div>
-
-  
-
-  
-</aside>
-    <div class="clearfix"></div>
-  </div>
-  <footer id="footer" class="inner"><div class="alignleft">
+<p>
   
   &copy; 2013 NG
   
-</div>
+</p>
 <div class="clearfix"></div></footer>
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
-<script src="/js/jquery.imagesloaded.min.js"></script>
+  <script src="/js/jquery.imagesloaded.min.js"></script>
 <script src="/js/gallery.js"></script>
 
 
@@ -396,5 +353,12 @@ lReturn = SCardListReaders(hSC, <span class="literal">NULL</span>, (LPTSTR)mszRe
 })(jQuery);
 </script>
 
+
+<div id="phasebeam">
+  <canvas></canvas>
+  <canvas></canvas>
+  <canvas></canvas>
+</div>
+<script src="/js/phasebeam.js"></script>
 </body>
 </html>
