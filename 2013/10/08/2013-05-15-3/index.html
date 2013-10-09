@@ -7,7 +7,7 @@
   <meta name="author" content="NG">
 
   
-  <meta name="description" content="// select PSF (1PAY.SYS.DDF01) /*———————————————————————————*/beijing.Util.log(&quot;select file: tag.selectByName(DFN_PSE)&quot;);if (tag.selectByNam">
+  <meta name="description" content="// select PSF (1PAY.SYS.DDF01) /*———————————————————————————*/beijing.Util.log(&quot;select file: tag.selectByName(DFN_PSE)&quot;);if (tag.selectByName(DFN_PSE).isOkey()) {protected final static byte[] DFN_PSE = { (byte) ‘1’, (byte) ‘P’,(byte) ‘A’, (byte) ‘Y’, (byte) ‘.’, (byte) ‘S’, (byte) ‘Y’,(byte) ‘S’, (byte) ‘.’, (byte) ‘D’, (byte) ‘D’, (byte) ‘F’,(byte) ‘0’, (byte) ‘1’, }; //1PAY.SYS.DDF01name = DFN_PSE;ByteBuffer buff = ByteBuffer.allocate(name.length + 6);buff.put((byte) 0x00); // CLA Classbuff.put((byte) 0xA4); // INS Instructionbuff.put((byte) 0x04); // P1 Parameter 1 SELECT by NAMEbuff.put((byte) 0x00); // P2 Parameter 2buff.put((byte) name.length); // Lcbuff.put(name); buff.put((byte) 0x00); // Le">
   
   
 
@@ -42,7 +42,7 @@
   </header>
   <div class="entry-content">
     
-      <p>// select PSF (1PAY.SYS.DDF01) /*———————————————————————————*/<br>beijing.Util.log(&quot;select file: tag.selectByName(DFN_PSE)&quot;);<br>if (tag.selectByName(DFN_PSE).isOkey()) {<br>protected final static byte[] DFN_PSE = { (byte) ‘1’, (byte) ‘P’,<br>(byte) ‘A’, (byte) ‘Y’, (byte) ‘.’, (byte) ‘S’, (byte) ‘Y’,<br>(byte) ‘S’, (byte) ‘.’, (byte) ‘D’, (byte) ‘D’, (byte) ‘F’,<br>(byte) ‘0’, (byte) ‘1’, }; //1PAY.SYS.DDF01<br>name = DFN_PSE;<br>ByteBuffer buff = ByteBuffer.allocate(name.length + 6);<br>buff.put((byte) 0x00); // CLA Class<br>buff.put((byte) 0xA4); // INS Instruction<br>buff.put((byte) 0x04); // P1 Parameter 1 SELECT by NAME<br>buff.put((byte) 0x00); // P2 Parameter 2<br>buff.put((byte) name.length); // Lc<br>buff.put(name); buff.put((byte) 0x00); // Le<br>SELECT命令参考<br>第1部分电子钱包电子存折应用卡片规范 之<br>  表33 SELECT 命令报文<br>  表34 SELECT 命令引用控制参数</p>
+      <p>// select PSF (1PAY.SYS.DDF01) /*———————————————————————————*/<br>beijing.Util.log(&quot;select file: tag.selectByName(DFN_PSE)&quot;);<br>if (tag.selectByName(DFN_PSE).isOkey()) {<br>protected final static byte[] DFN_PSE = { (byte) ‘1’, (byte) ‘P’,<br>(byte) ‘A’, (byte) ‘Y’, (byte) ‘.’, (byte) ‘S’, (byte) ‘Y’,<br>(byte) ‘S’, (byte) ‘.’, (byte) ‘D’, (byte) ‘D’, (byte) ‘F’,<br>(byte) ‘0’, (byte) ‘1’, }; //1PAY.SYS.DDF01<br>name = DFN_PSE;<br>ByteBuffer buff = ByteBuffer.allocate(name.length + 6);<br>buff.put((byte) 0x00); // CLA Class<br>buff.put((byte) 0xA4); // INS Instruction<br>buff.put((byte) 0x04); // P1 Parameter 1 SELECT by NAME<br>buff.put((byte) 0x00); // P2 Parameter 2<br>buff.put((byte) name.length); // Lc<br>buff.put(name); buff.put((byte) 0x00); // Le<br><a id="more"></a><br>SELECT命令参考<br>第1部分电子钱包电子存折应用卡片规范 之<br>  表33 SELECT 命令报文<br>  表34 SELECT 命令引用控制参数</p>
 <h1>如果返回结果结尾是 0x9000  ，就SELECT成功</h1>
 <p>SFI_EXTRA_LOG = 4;<br>// read card info file, binary (4)<br>/*———————————————————————————————*/</p>
 <h1>INFO = tag.readBinary(SFI_EXTRA_LOG);</h1>

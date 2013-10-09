@@ -9,7 +9,7 @@
   
   <meta name="description" content="1.warning: #550-D: variable “d” was set but never used
 描述:变量‘d’定义但从未使用,或者是,虽然这个变量你使用了,但编译器认为变量d所在的语句没有意义,编译器把它优化了.
-解决:仔细衡量所定义的变量d是否有用,若是认定变量d所在语句有意义,那">
+解决:仔细衡量所定义的变量d是否有用,若是认定变量d所在语句有意义,那么尝试用volatile关键字修饰变量d,若是真的没有用,那么删除掉以释放可能的内存.">
   
   
 
@@ -46,8 +46,7 @@
     
       <p>1.warning: #550-D: variable “d” was set but never used</p>
 <p>描述:变量‘d’定义但从未使用,或者是,虽然这个变量你使用了,但编译器认为变量d所在的语句没有意义,编译器把它优化了.</p>
-<p>解决:仔细衡量所定义的变量d是否有用,若是认定变量d所在语句有意义,那么尝试用volatile关键字修饰变量d,若是真的没有用,那么删除掉以释放可能的内存.</p>
-<p>2.warning: #1-D: last line of file ends without a newline</p>
+<p>解决:仔细衡量所定义的变量d是否有用,若是认定变量d所在语句有意义,那么尝试用volatile关键字修饰变量d,若是真的没有用,那么删除掉以释放可能的内存.<br><a id="more"></a><br>2.warning: #1-D: last line of file ends without a newline</p>
 <p>描述:文件最后一行不是新的一行.编译器要求程序文件的最后一行必须是空行,想了半天没想通为什么要这样.</p>
 <p>解决:可以不理会.若是觉得出现警告不爽,那么在出现警告的文件的最后一行敲个回车,空出一行.</p>
 <p>​3. warning: #111-D: statement is unreachable</p>
